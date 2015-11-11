@@ -1,19 +1,9 @@
-<?php
+<?php 
 
-use PhpImap\Mailbox as ImapMailbox;
-use PhpImap\IncomingMail;
-use PhpImap\IncomingMailAttachment;
+require __DIR__.'/vendor/autoload.php';
 
-$mailbox = new PhpImap\Mailbox('{imap.gmail.com:993/imap/ssl}INBOX', 'some@gmail.com', '*********', __DIR__);
-$mails = array();
+use MailImap\MailBox as MailBox;
 
-$mailsIds = $mailbox->searchMailBox('ALL');
-if(!$mailsIds) {
-    die('Mailbox is empty');
-}
-
-$mailId = reset($mailsIds);
-$mail = $mailbox->getMail($mailId);
-
-var_dump($mail);
-var_dump($mail->getAttachments());
+$box = new MailBox("{imap.gmail.com:993/imap/ssl}", '', '');
+$box->connect();
+$box->listMailBoxes();
