@@ -59,7 +59,7 @@ class MailBox
 			echo "Error! en la llamada";
 		} else {
 			foreach ($mailBoxes as $boxe) {
-				echo $boxe . '<br />\n';
+				echo $boxe . '<br />';
 			}
 		}
 	}
