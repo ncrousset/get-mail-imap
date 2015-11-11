@@ -85,8 +85,11 @@ class MailBox
 	 * @param  int $numMsg 
 	 * @return array
 	 */
-	public function headerMsg($numMsg)
+	public function headerMsg($numMsg, $uid = false)
 	{
+		//$numMsg es el uid y no el numero de secuencia 
+		if($uid) $numMsg =  imap_msgno($this->connect, $numMsg);
+
 		$header = explode("\n", imap_fetchheader($this->connect, $numMsg));
 
 		if (is_array($header) && count($header)) {
@@ -107,15 +110,90 @@ class MailBox
 	 * @param  int $numMsg 
 	 * @return text/html
 	 */
-	public function bodyMsg($numMsg)
+	public function bodyMsg($numMsg, $uid = false)
 	{
+		//$numMsg es el uid y no el numero de secuencia 
+		if($uid) $numMsg =  imap_msgno($this->connect, $numMsg);
+
 		$body = imap_fetchbody($this->connect, $numMsg, "1");
 		return $body;
+	}
+
+	/**
+	 * [fetchOverview description]
+	 * 
+	 * @param  int $numMsgStart 
+	 * @param  int $numMsgEnd   
+	 * @return array             
+	 */
+	public function fetchOverview($numMsgStart, $numMsgEnd)
+	{
+		$resurt = imap_fetch_overview($this->connect,"$numMsgStart:{$numMsgEnd}", 0);
+
+		$mailes = array();
+
+		foreach ($resurt as $overview) {
+			$mail = [
+				'no'      => $overview->msgno,
+				'uid'     => $overview->uid,
+				'subject' => $overview->subject,
+				'from'	  => $overview->from,
+				'to'	  => $overview->to,
+				'date'	  => $overview->date,
+				'recent'  => $overview->recent,
+				'flagged' => $overview->flagged,
+				'answered'=> $overview->answered,
+				'deleted' => $overview->deleted,
+				'seen'	  => $overview->seen,
+				'draft'	  => $overview->draft
+			];
+
+
+			array_push($mailes, $mail);
+		}
+
+		arsort($mailes);
+		return $mailes;
 	}
 
 	public function numMsg()
 	{
 		return imap_num_msg($this->connect);
+	}
+
+	/**
+	 * Obten id unico de el mensage
+	 * 
+	 * @param  int $numMsg
+	 * @return int 
+	 */
+	public function getUID($numMsg)
+	{
+		return imap_uid($this->connect, $numMsg);
+	}
+
+	/**
+	 * [getUIDBySearch description]
+	 * 
+	 * @param  string $pattern ej:'FROM "updates.freelancer.com"'
+	 * @return array         
+	 */
+	public function getUIDBySearch($pattern = 'ALL') 
+	{
+		return imap_search($this->connect, $pattern, SE_UID);
+	}
+
+	/**
+	 * 
+	 * @return booleam
+	 */
+	public function ping()
+	{
+		if(!imap_ping($this->connect)){
+			$this->connect();
+		}
+
+		return true;
 	}
 
 	/**

@@ -11,10 +11,22 @@ $box->connect();
 //$box->listMailBoxes();
 //
 
-$message = imap_fetchbody($box->connect, 5, "1");
+// $message = imap_fetchbody($box->connect, 5, "1");
+
+
+// echo $box->getUID(5);
+
+// var_dump(imap_status($box->connect, "{" . $config['host'] .":". $config['post_imap'] ."/imap/ssl}", SA_ALL));
+
+// var_dump(imap_check($box->connect));
 
 
 
 
-echo var_export($box->bodyMsg(5));
+// echo var_export($box->bodyMsg(5));
 
+
+// $MC = imap_check($box->connect);
+// $start = $MC->Nmsgs - 100;
+
+// var_dump($box->fetchOverview($start, $MC->Nmsgs));
