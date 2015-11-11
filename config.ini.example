@@ -1,0 +1,6 @@
+[mail]
+host = imap.gmail.com
+post_imap = 993
+post_smtp = 465
+username = other@gmail.com
+password = 11111
