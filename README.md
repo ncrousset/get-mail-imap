@@ -12,7 +12,7 @@ php >= 5.3.0 y ext-imap
 
 # Instalación
 
-> git clone https://github.com/natanael926/get-mail-imap.git
-> curl -s https://getcomposer.org/installer | php
+> git clone https://github.com/natanael926/get-mail-imap.git <br />
+> curl -s https://getcomposer.org/installer | php <br />
 > php composer.phar install 
 
