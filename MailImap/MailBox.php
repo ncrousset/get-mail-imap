@@ -5,8 +5,11 @@
  * @package MailImap
  * @author  Rudys Natanael Acosta <natanael926@gmail.com>
  */
-class MailBox 
+class MailBox extends ImapConnect
 {
+
+
+	static private $instance = null;
 	
 	/**
 	 * Ruta del servidor y buzon para el servidor 
@@ -31,7 +34,15 @@ class MailBox
      */
 	protected $password;
 
-	public $connect = null;
+
+	public static getInstance()
+	{
+		if($this->instance == null) {
+			$this->instance = new self();
+		}
+
+		return $this->instance;
+	}
 
 	/**
 	 * 
@@ -41,9 +52,7 @@ class MailBox
 	 */
 	public function __construct($authhost, $username, $password )
 	{
-		$this->authhost = $authhost;
-		$this->username = $username;
-		$this->password = $password;
+		parent::__construct($authhost, $username, $password); 
 	}
 
 	/**
