@@ -1,12 +1,21 @@
 <?php namespace MailImap;
 
+use MailImap\Config;
+use MailImap\ImapConnect;
+
 /**
  *
  * @package MailImap
  * @author  Rudys Natanael Acosta <natanael926@gmail.com>
  */
-class MailBox 
+class Imap extends ImapConnect
 {
+
+	/**
+	 * 
+	 * @var Imap
+	 */
+	private static $instance = null;
 	
 	/**
 	 * Ruta del servidor y buzon para el servidor 
@@ -16,44 +25,32 @@ class MailBox
 	 */
 	protected $authhost;
 
-    /**
-     * Nombre del usuario
-     * 
-     * @var string
-     */
-	protected $username;
-
-
-    /**
-     * La clave asociada con el username
-     * 
-     * @var string
-     */
-	protected $password;
-
-	public $connect = null;
-
 	/**
 	 * 
-	 * @param string $authhost
-	 * @param string $username 
-	 * @param string $password 
+	 * @param Config $config
 	 */
-	public function __construct($authhost, $username, $password )
+	public function __construct(Config $config)
 	{
-		$this->authhost = $authhost;
-		$this->username = $username;
-		$this->password = $password;
+		$this->authhost = "{" . $config->host .":". $config->postImap ."/imap/ssl}";
+		parent::__construct($this->authhost, $config->username, $config->password); 
 	}
 
 	/**
-	 * Inicio de coneccion
 	 * 
-	 * @return void
+	 * @return Imap 	
 	 */
-	public function connect()
+	public static function getInstance()
 	{
-		$this->connect = imap_open($this->authhost, $this->username, $this->password);
+		if(self::$instance == null) {
+			self::$instance = new self(Config::getInstace());
+		}
+
+		return self::$instance;
+	}
+
+	public function setAuthHost($authHost)
+	{
+		$this->authhost = $authhost;
 	}
 
     /**
@@ -128,6 +125,7 @@ class MailBox
 	 */
 	public function fetchOverview($numMsgStart, $numMsgEnd)
 	{
+
 		$resurt = imap_fetch_overview($this->connect,"$numMsgStart:{$numMsgEnd}", 0);
 
 		$mailes = array();
@@ -182,27 +180,5 @@ class MailBox
 	{
 		return imap_search($this->connect, $pattern, SE_UID);
 	}
-
-	/**
-	 * 
-	 * @return booleam
-	 */
-	public function ping()
-	{
-		if(!imap_ping($this->connect)){
-			$this->connect();
-		}
-
-		return true;
-	}
-
-	/**
-	 * Close connection
-	 * 
-	 * @return void
-	 */
-	public function imapClose()
-	{
-		imap_close($this->connect);
-	}
+	
 }
