@@ -1,15 +1,21 @@
 <?php namespace MailImap;
 
+use MailImap\Config;
+use MailImap\ImapConnect;
+
 /**
  *
  * @package MailImap
  * @author  Rudys Natanael Acosta <natanael926@gmail.com>
  */
-class MailBox extends ImapConnect
+class Imap extends ImapConnect
 {
 
-
-	static private $instance = null;
+	/**
+	 * 
+	 * @var Imap
+	 */
+	private static $instance = null;
 	
 	/**
 	 * Ruta del servidor y buzon para el servidor 
@@ -19,50 +25,32 @@ class MailBox extends ImapConnect
 	 */
 	protected $authhost;
 
-    /**
-     * Nombre del usuario
-     * 
-     * @var string
-     */
-	protected $username;
-
-
-    /**
-     * La clave asociada con el username
-     * 
-     * @var string
-     */
-	protected $password;
-
-
-	public static getInstance()
+	/**
+	 * 
+	 * @param Config $config
+	 */
+	public function __construct(Config $config)
 	{
-		if($this->instance == null) {
-			$this->instance = new self();
+		$this->authhost = "{" . $config->host .":". $config->postImap ."/imap/ssl}";
+		parent::__construct($this->authhost, $config->username, $config->password); 
+	}
+
+	/**
+	 * 
+	 * @return Imap 	
+	 */
+	public static function getInstance()
+	{
+		if(self::$instance == null) {
+			self::$instance = new self(Config::getInstace());
 		}
 
-		return $this->instance;
+		return self::$instance;
 	}
 
-	/**
-	 * 
-	 * @param string $authhost
-	 * @param string $username 
-	 * @param string $password 
-	 */
-	public function __construct($authhost, $username, $password )
+	public function setAuthHost($authHost)
 	{
-		parent::__construct($authhost, $username, $password); 
-	}
-
-	/**
-	 * Inicio de coneccion
-	 * 
-	 * @return void
-	 */
-	public function connect()
-	{
-		$this->connect = imap_open($this->authhost, $this->username, $this->password);
+		$this->authhost = $authhost;
 	}
 
     /**
@@ -137,6 +125,7 @@ class MailBox extends ImapConnect
 	 */
 	public function fetchOverview($numMsgStart, $numMsgEnd)
 	{
+
 		$resurt = imap_fetch_overview($this->connect,"$numMsgStart:{$numMsgEnd}", 0);
 
 		$mailes = array();
@@ -191,27 +180,5 @@ class MailBox extends ImapConnect
 	{
 		return imap_search($this->connect, $pattern, SE_UID);
 	}
-
-	/**
-	 * 
-	 * @return booleam
-	 */
-	public function ping()
-	{
-		if(!imap_ping($this->connect)){
-			$this->connect();
-		}
-
-		return true;
-	}
-
-	/**
-	 * Close connection
-	 * 
-	 * @return void
-	 */
-	public function imapClose()
-	{
-		imap_close($this->connect);
-	}
+	
 }
