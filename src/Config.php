@@ -11,41 +11,34 @@ class Config
 	private static $instance = null;
 
 	/**
-	 * 
 	 * @var string
 	 */
 	public $host;
 
 	/**
-	 * usuario de la cuenta 
-	 * 
 	 * @var string
 	 */
 	public $username;
 
 	/**
-	 * Clave de la cuenta
-	 * 
 	 * @var string
 	 */
 	public $password;
 
 	/**
-	 * Puerto del protocolo Imap
-	 * 
-	 * @var integer
+	 * @var int
 	 */
 	public $postImap;
 
 	/**
-	 * Puerto del protocolo smtp
-	 * @var integer
+	 * @var int
 	 */
 	public $postSmtp;
 
 	/**
 	 * 
 	 * @param string $pathConfigIni 
+	 * @return  void
 	 */
 	public function __construct($pathConfigIni = __DIR__ . '../../config.ini')
 	{
@@ -62,6 +55,7 @@ class Config
 	/**
 	 *
 	 * @return Config 
+	 * @return Config
 	 */
 	public static function getInstace()
 	{
